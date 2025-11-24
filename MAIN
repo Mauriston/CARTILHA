@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processo para Inspeções de Saúde - Redesign</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonte Carlito (Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Scripts para PDF e Imagem -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Carlito', sans-serif;
+            background-color: #e5e7eb;
+        }
+
+        /* Container Principal */
+        #doc-container {
+            width: 210mm; /* Largura base A4 */
+            height: auto; 
+            background: white;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        /* Wrapper visual para a tela */
+        .page-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Cores Personalizadas */
+        .bg-navy { background-color: #1e3a8a; }
+        .text-navy { color: #1e3a8a; }
+        .bg-gold { background-color: #fbbf24; }
+        .text-alert { color: #b91c1c; }
+        .bg-alert-light { background-color: #fef2f2; }
+
+        /* Estilo MD3 Elevated Card (Restaurado) */
+        .md3-elevated-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Ajuste para impressão nativa */
+        @media print {
+            body { background: white; }
+            #controls { display: none; }
+            .page-shadow { box-shadow: none; }
+        }
+    </style>
+</head>
+<body class="py-8 min-h-screen flex flex-col items-center justify-center">
+
+    <!-- Controles de Download -->
+    <div id="controls" class="mb-8 flex gap-4 bg-white p-4 rounded-2xl shadow-xl sticky top-4 z-50 ring-1 ring-gray-200">
+        <button onclick="generateFile('jpg')" class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition font-bold shadow-md hover:shadow-lg active:scale-95">
+            <!-- Icon SVG Image -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2"></rect><circle cx="8.5" cy="8.5" r="1.5" stroke-width="2"></circle><polyline points="21 15 16 10 5 21" stroke-width="2"></polyline></svg>
+            Baixar JPG
+        </button>
+        <button onclick="generateFile('pdf')" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition font-bold shadow-md hover:shadow-lg active:scale-95">
+            <!-- Icon SVG PDF -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            Baixar PDF
+        </button>
+    </div>
+
+    <!-- Wrapper com sombra -->
+    <div class="page-shadow bg-white">
+        <!-- O Elemento que será capturado -->
+        <div id="doc-container">
+            
+            <!-- Cabeçalho -->
+            <header class="bg-navy text-white p-6 flex items-center justify-between border-b-4 border-yellow-500 relative shrink-0">
+                <div class="w-24 flex-shrink-0 flex items-center justify-center">
+                    <!-- Drop-shadow restaurado -->
+                    <img src="https://i.imgur.com/KUbQz08.png" alt="Brasão Hospital Naval de Recife" class="w-20 h-24 object-contain drop-shadow-md">
+                </div>
+                
+                <div class="flex-1 text-center px-2">
+                    <h1 class="text-4xl font-bold uppercase tracking-normal leading-tight whitespace-nowrap">INSPEÇÕES DE SAÚDE DE ROTINA</h1>
+                    <h2 class="text-2xl font-normal text-blue-100 mt-1">MPI, MPIQ E JRS/HNRe</h2>
+                </div>
+
+                <div class="w-24 flex-shrink-0"></div>
+            </header>
+
+            <!-- Corpo -->
+            <main class="p-8 bg-white relative">
+                <!-- Timeline -->
+                <div class="absolute left-[3.25rem] top-[3.25rem] bottom-[3.25rem] w-0.5 bg-gray-200 z-0"></div>
+
+                <div class="space-y-4 relative z-10">
+
+                    <!-- Passo 1 -->
+                    <div class="flex gap-4 group items-center">
+                        <!-- Shadow e Ring restaurados -->
+                        <div class="flex-shrink-0 w-10 h-10 bg-navy text-white rounded-full flex items-center justify-center text-xl font-bold shadow-md ring-4 ring-white z-10">1</div>
+                        <!-- Classe md3-elevated-card restaurada -->
+                        <div class="flex-1 md3-elevated-card p-3">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-lg font-bold text-navy uppercase flex items-center gap-2">ABERTURA DA IS</h3>
+                                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                            </div>
+                            <p class="text-gray-700 text-sm leading-snug">A IS é aberta a partir da apresentação do militar ao MPI ou JRS/HNRe via SEIS pelo Encarregado de Pessoal da sua OM.</p>
+                            <p class="mt-1 text-xs text-blue-800 italic bg-blue-50 inline-block px-2 py-0.5 rounded-lg">*Servidores civis são apresentados por ofício ou MSG.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 2 -->
+                    <div class="flex gap-4 group items-center">
+                        <div class="flex-shrink-0 w-10 h-10 bg-navy text-white rounded-full flex items-center justify-center text-xl font-bold shadow-md ring-4 ring-white z-10">2</div>
+                        <div class="flex-1 md3-elevated-card p-3">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-lg font-bold text-navy uppercase">COMPARECIMENTO À SEC/JRS</h3>
+                                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                            </div>
+                            <p class="text-gray-700 text-sm leading-snug">O inspecionado deverá comparecer à SEC/JRS <span class="text-alert font-bold bg-red-50 px-1 rounded">em até 7 dias úteis</span> para receber os pedidos dos exames previstos de acordo com a finalidade da IS.</p>
+                            <p class="mt-1 text-xs text-gray-500 italic">*Se a finalidade da IS não exigir exames, já será agendado o dia da IS.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 3 -->
+                    <div class="flex gap-4 group items-center">
+                        <div class="flex-shrink-0 w-10 h-10 bg-navy text-white rounded-full flex items-center justify-center text-xl font-bold shadow-md ring-4 ring-white z-10">3</div>
+                        <div class="flex-1 md3-elevated-card p-3">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-lg font-bold text-navy uppercase">AGENDAMENTO DA IS</h3>
+                                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM12 9c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm.5-5.5h-1v2.75l2.25 1.35.75-1.23-1.5-.87V12z"/></svg>
+                            </div>
+                            <p class="text-gray-700 text-sm leading-snug">O <span class="font-bold text-navy">agendamento é de responsabilidade do inspecionado</span> e deverá ser feito (pessoalmente ou por telefone) após a realização de todos os exames e em <span class="font-bold">até 20 dias úteis</span>.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 4 -->
+                    <div class="flex gap-4 group items-center">
+                        <div class="flex-shrink-0 w-10 h-10 bg-navy text-white rounded-full flex items-center justify-center text-xl font-bold shadow-md ring-4 ring-white z-10">4</div>
+                        <div class="flex-1 md3-elevated-card p-3">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-lg font-bold text-navy uppercase">COMPARECIMENTO À IS</h3>
+                                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/></svg>
+                            </div>
+                            <p class="text-gray-700 text-sm leading-snug mb-2">O inspecionado deverá comparecer na data agendada munido da identidade militar na validade e seu <span class="font-bold">PMI ou Guia Sanitária</span>, além dos exames realizados.</p>
+                            <div class="bg-alert-light border border-red-100 rounded-xl p-2 text-xs text-alert space-y-0.5">
+                                <p class="flex items-center gap-2 italic">*Militares da ativa deverão estar devidamente fardados</p>
+                                <p class="font-bold text-alert">**O não comparecimento acarretará no arquivamento da IS com INFO à OM solicitante</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passo 5 -->
+                    <div class="flex gap-4 group items-center">
+                        <div class="flex-shrink-0 w-10 h-10 bg-navy text-white rounded-full flex items-center justify-center text-xl font-bold shadow-md ring-4 ring-white z-10">5</div>
+                        <div class="flex-1 md3-elevated-card p-3">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-lg font-bold text-navy uppercase">CONCLUSÃO DA IS</h3>
+                                <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            </div>
+                            <p class="text-gray-700 text-sm leading-snug">Será enviada uma MSG à OM do militar informando o laudo exarado em até 10 dias úteis.</p>
+                            <div class="bg-alert-light border border-red-100 rounded-xl p-2 text-xs text-alert space-y-0.5 mt-2">
+                                <p class="flex items-center gap-2 italic text-justify leading-tight">
+                                    *A critério do AMP, poderá ser solicitado parecer especializado para exarar o laudo, porém não há a obrigação em acatá-lo.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passo 6 -->
+                    <div class="flex gap-4 group items-center">
+                        <div class="flex-shrink-0 w-10 h-10 bg-navy text-white rounded-full flex items-center justify-center text-xl font-bold shadow-md ring-4 ring-white z-10">6</div>
+                        <div class="flex-1 md3-elevated-card p-3">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-lg font-bold text-navy uppercase">NÚCLEO DE AVALIAÇÃO E CONTROLE (NAC)</h3>
+                                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-8-2h4v2h-4V4zm-2 10h2v2h2v-2h2v-2h-2v-2h-2v2h-2v2z"/></svg>
+                            </div>
+                            <p class="text-gray-700 text-sm leading-snug">Se a JRS/HNRe deliberar <span class="font-bold text-navy">LTS ou Restrições</span>, o militar deverá apresentar-se tempestivamente ao <span class="font-bold text-navy">NAC</span>.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+
+            <!-- Rodapé -->
+            <footer class="bg-navy text-white py-2 pr-2 pl-0 border-t-4 border-yellow-500 mt-4 shrink-0">
+                <div class="flex justify-between items-center h-full">
+                    <div class="pl-[3.5rem]">
+                        <h4 class="font-bold text-sm mb-0.5">Hospital Naval de Recife – Junta Regular de Saúde</h4>
+                        <div class="flex items-center gap-2 text-blue-100 text-xs">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 .05 1.25.26 2.45.62 3.57.12.35.03.75-.24 1.02l-2.2 2.2z"/></svg>
+                            (81) 3036 - 9073
+                            <span class="mx-1">/</span>
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                            hnre.jrs@marinha.mil.br
+                        </div>
+                        <div class="flex items-center gap-2 text-blue-200 text-[10px] mt-0.5">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Avenida Cruz Cabugá 1200, Santo Amaro, Recife/PE
+                        </div>
+                    </div>
+                    <div class="text-right flex items-center justify-end opacity-90">
+                       <img src="https://i.imgur.com/VYy5f8W.png" alt="Saúde Naval" class="h-20 object-contain">
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        window.jsPDF = window.jspdf.jsPDF;
+
+        function generateFile(type) {
+            const element = document.getElementById("doc-container");
+            const btnJPG = document.querySelector('button[onclick="generateFile(\'jpg\')"]');
+            const btnPDF = document.querySelector('button[onclick="generateFile(\'pdf\')"]');
+            
+            const originalTextJPG = btnJPG.innerHTML;
+            const originalTextPDF = btnPDF.innerHTML;
+            
+            if(type === 'jpg') btnJPG.innerHTML = 'Gerando...';
+            if(type === 'pdf') btnPDF.innerHTML = 'Gerando...';
+
+            const options = {
+                scale: 2, 
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                windowWidth: 1200,
+                x: 0,
+                y: 0
+            };
+
+            html2canvas(element, options).then(canvas => {
+                if (type === 'jpg') {
+                    const link = document.createElement("a");
+                    link.download = "cartilha_inspecao.jpg";
+                    link.href = canvas.toDataURL("image/jpeg", 0.95);
+                    link.click();
+                } else {
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = canvas.width;
+                    const imgHeight = canvas.height;
+
+                    const pdfWidth = 210; 
+                    const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+
+                    const pdf = new jsPDF('p', 'mm', [pdfWidth, pdfHeight]);
+                    
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save("cartilha_inspecao.pdf");
+                }
+
+                btnJPG.innerHTML = originalTextJPG;
+                btnPDF.innerHTML = originalTextPDF;
+            }).catch(err => {
+                console.error("Erro:", err);
+                alert("Erro ao gerar. Tente novamente.");
+                btnJPG.innerHTML = originalTextJPG;
+                btnPDF.innerHTML = originalTextPDF;
+            });
+        }
+    </script>
+</body>
+</html>
