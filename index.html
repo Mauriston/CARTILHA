@@ -12,10 +12,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    
-    <!-- Scripts para PDF e Imagem -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         body {
@@ -63,20 +59,6 @@
     </style>
 </head>
 <body class="py-8 min-h-screen flex flex-col items-center justify-center">
-
-    <!-- Controles de Download -->
-    <div id="controls" class="mb-8 flex gap-4 bg-white p-4 rounded-2xl shadow-xl sticky top-4 z-50 ring-1 ring-gray-200">
-        <button onclick="generateFile('jpg')" class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition font-bold shadow-md hover:shadow-lg active:scale-95">
-            <!-- Icon SVG Image -->
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2"></rect><circle cx="8.5" cy="8.5" r="1.5" stroke-width="2"></circle><polyline points="21 15 16 10 5 21" stroke-width="2"></polyline></svg>
-            Baixar JPG
-        </button>
-        <button onclick="generateFile('pdf')" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition font-bold shadow-md hover:shadow-lg active:scale-95">
-            <!-- Icon SVG PDF -->
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-            Baixar PDF
-        </button>
-    </div>
 
     <!-- Wrapper com sombra -->
     <div class="page-shadow bg-white">
